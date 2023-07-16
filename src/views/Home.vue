@@ -1,5 +1,13 @@
 <template>
-    <counter/>
+    <counter
+            :minute="0"
+            :date="16"
+            :hour="17"
+            :millisecond="0"
+            :month="7"
+            :second="0"
+            :year="2023"
+    />
 </template>
 
 <script>

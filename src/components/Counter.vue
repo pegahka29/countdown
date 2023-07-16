@@ -1,6 +1,12 @@
 <template>
-    <div>
-        <section class="text-3xl flex justify-center flex-col mx-auto text-center">Until:</section>
+    <div v-if="loaded">
+        <section class="text-3xl flex justify-center flex-col mx-auto text-center">
+            <h5 v-if="!expired">Until:
+              {{ year}} /  {{month}} / {{date}}
+                {{hour}}: {{minute}} : {{second}} : {{ millisecond}}
+            </h5>
+            <h5 v-else>Timer is done!</h5>
+        </section>
         <section class="flex text-6xl justify-center content-center">
             <div class="days mr-2 relative">
                 {{ displayDays }}
@@ -36,24 +42,38 @@
 export default {
     //eslint-disable-next-line
     name: "Counter",
+    props: ['year', 'month', 'date', 'hour', 'minute', 'second', 'millisecond'],
     data() {
         return {
             displayDays: 0,
             displayHours: 0,
             displayMinutes: 0,
             displaySeconds: 0,
+            loaded: false,
+            expired: false
         }
     },
     computed: {
         _seconds: () => 1000,
         _minutes() {
-            return this._seconds * 60
+            return this._seconds * 60;
         },
         _hours() {
-            return this._minutes * 60
+            return this._minutes * 60;
         },
         _days() {
-            return this._hours * 24
+            return this._hours * 24;
+        },
+        end() {
+            return new Date(
+                this.year,
+                this.month,
+                this.date,
+                this.hour,
+                this.minute,
+                this.second,
+                this.millisecond
+            )
         }
     },
     mounted() {
@@ -64,25 +84,26 @@ export default {
         showRemaining() {
             const timer = setInterval(() => {
                 const now = new Date()
-                const end = new Date(2023, 7, 16, 15, 46, 0)
-                console.log(end.getTime(),'end')
-                console.log(now.getTime(),'now')
-                const distance = end.getTime() - now.getTime()
+                // const end = new Date(2023, 7, 16, 15, 46, 0)
+                const distance = this.end.getTime() - now.getTime()
                 if (distance < 0) {
                     clearInterval(timer)
+                    this.expired = true
+                    this.loaded = true
                     return
                 }
 
-                const days = Math.floor((distance / this._days))
-                const hours = Math.floor((distance % this._days) / this._hours)
-                const minutes = Math.floor((distance % this._hours) / this._minutes)
-                const seconds = Math.floor((distance % this._minutes) / this._seconds)
+                const days = Math.floor(distance / this._days);
+                const hours = Math.floor((distance % this._days) / this._hours);
+                const minutes = Math.floor((distance % this._hours) / this._minutes);
+                const seconds = Math.floor((distance % this._minutes) / this._seconds);
 
-                this.displaySeconds = this.formatNum(seconds)
-                this.displayMinutes = this.formatNum(minutes)
-                this.displayHours = this.formatNum(hours)
-                this.displayDays = this.formatNum(days)
-            },1000)
+                this.displaySeconds = this.formatNum(seconds);
+                this.displayMinutes = this.formatNum(minutes);
+                this.displayHours = this.formatNum(hours);
+                this.displayDays = this.formatNum(days);
+                this.loaded = true
+            }, 1000)
         }
     },
 }
