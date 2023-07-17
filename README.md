@@ -1,5 +1,4 @@
-# countdown
-
+# a countdown project with Vue Cli and Tailwindcss
 ## Project setup
 ```
 yarn install
